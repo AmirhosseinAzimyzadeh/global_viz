@@ -42,7 +42,6 @@ export default async function textureGenerator(countyISO?: string): Promise<stri
         context.closePath();
         if (country.properties.ISO_A3 === countyISO) {
           context.fillStyle = 'rgb(255, 155, 0)';
-          console.log(country.properties.ADMIN);
         } else {
           context.fillStyle = 'rgb(150, 150, 150)';
         }
@@ -55,6 +54,5 @@ export default async function textureGenerator(countyISO?: string): Promise<stri
 
   // canvas to data url
   const dataURL = canvas.toDataURL();
-  document.body.appendChild(canvas);
   return dataURL;
 }
