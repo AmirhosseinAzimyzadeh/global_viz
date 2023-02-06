@@ -1,29 +1,60 @@
 import * as d3 from 'd3';
 import * as THREE from 'three';
 import { feature } from 'topojson-client';
+import { World } from './@types/WorldTypes';
 
-export default function textureGenerator() {
-  // world svg element
-  const SVGElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+const TEXTURE_WIDTH = 640 * 4;
+const TEXTURE_HEIGHT = 320 * 4;
 
-  const projection = d3.geoNaturalEarth1();
-  const path = d3.geoPath(projection);
-  const pathGenerator = d3.geoPath().projection(projection)
+export default async function textureGenerator(countyISO?: string): Promise<string> {
+  const canvas = document.createElement('canvas');
+  canvas.width = TEXTURE_WIDTH;
+  canvas.height = TEXTURE_HEIGHT;
+  const context = canvas.getContext('2d')!;
 
-  const svg = d3.select(SVGElement)
-    .append('path')
-    .attr('class', 'sphere')
-    .attr('d', path({ type: 'Sphere' }));
+  const worldURL = '/data/countries.json';
 
-  d3.json('https://unpkg.com/world-atlas@1.1.4/world/110m.json')
-    .then((data: any) => {
-      const countries = feature(data, data.objects.countries);
-      svg.selectAll('path').data(countries?.features)
-        .enter().append('path')
-          .attr('class', 'country')
-          // @ts-ignore
-          .attr('d', pathGenerator);
+  const world = await d3.json<World>(worldURL);
+  if (!world) return '';
+
+  context.clearRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+  context.fillStyle = 'rgb(255, 255, 255)';
+  context.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+  world.features.forEach((country) => {
+    const { geometry } = country;
+    let coordinates: [number, number][][][];
+    if (geometry.type === 'Polygon') {
+      coordinates = [geometry.coordinates];
+    } else {
+      coordinates = geometry.coordinates;
+    }
+    coordinates.forEach((closedLand) => {
+      closedLand.forEach((land) => {
+        context.beginPath();
+        land.forEach(([long, lat]) => {
+          // Convert lat long to Patterson Cylindrical Projection x y
+          const x = (long + 180) * (TEXTURE_WIDTH / 360);
+          const y = (lat + 90) * (TEXTURE_HEIGHT / 180);
+          // rotate 90 degrees
+          // flip vertically
+          context.lineTo(x, TEXTURE_HEIGHT - y);
+        });
+        context.closePath();
+        if (country.properties.ISO_A3 === countyISO) {
+          context.fillStyle = 'rgb(255, 155, 0)';
+          console.log(country.properties.ADMIN);
+        } else {
+          context.fillStyle = 'rgb(150, 150, 150)';
+        }
+        context.strokeStyle = 'rgb(0,0,0,0.4)';
+        context.stroke();
+        context.fill();
+      });
     });
+  });
 
-  document.body.appendChild(SVGElement);
+  // canvas to data url
+  const dataURL = canvas.toDataURL();
+  document.body.appendChild(canvas);
+  return dataURL;
 }
