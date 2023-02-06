@@ -3,8 +3,6 @@ import textureGenerator from './textureGenerator';
 
 export {}
 
-
-
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <canvas
     id="canvas"
@@ -20,21 +18,19 @@ async function initialize() {
   canvas.width = WIDTH;
   canvas.height = HEIGHT;
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
   const fov = 90;
   let aspect = WIDTH / HEIGHT;
   const near = 0.01;
   const far = 100;
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-  // const camera = new THREE.OrthographicCamera(-2, 2, 2, -2, near, far);
+
   camera.position.z = 2;
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('rgb(235, 235, 235)');
 
-  const geometry = new THREE.SphereGeometry(1, 100, 100);
+  const geometry = new THREE.SphereGeometry(0.75, 100, 100);
 
   const textureURI = await textureGenerator('USA');
 
@@ -47,13 +43,13 @@ async function initialize() {
   scene.add(sphere);
 
   // light
-  const light = new THREE.SpotLight('#fff', 0.2);
-  light.position.set(-2, 2, 5);
-  light.castShadow = true;
+  const light = new THREE.SpotLight('#fff', 0.5);
+  light.position.set(-2, 2, 2);
   scene.add(light);
 
-  const areaLight = new THREE.AmbientLight(0xffffff, 0.9);
-  scene.add(areaLight);
+  // ambient light
+  const ambientLight = new THREE.AmbientLight('#fff', 0.8);
+  scene.add(ambientLight);
 
   renderer.render(scene, camera);
 
@@ -61,7 +57,7 @@ async function initialize() {
   function animate() {
     requestAnimationFrame(animate);
     // sphere.rotation.x += 0.01;
-    sphere.rotation.y += 0.002;
+    sphere.rotation.y += 0.02;
     renderer.render(scene, camera);
   }
 
