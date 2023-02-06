@@ -1,6 +1,4 @@
 import * as d3 from 'd3';
-import * as THREE from 'three';
-import { feature } from 'topojson-client';
 import { World } from './@types/WorldTypes';
 
 const TEXTURE_WIDTH = 640 * 4;

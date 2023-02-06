@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import circularBarChartGenerator from './circularBarChartGenerator';
 import textureGenerator from './textureGenerator';
 
 export {}
@@ -17,7 +18,7 @@ async function initialize() {
   const canvas = document.querySelector<HTMLCanvasElement>('#canvas')!;
   canvas.width = WIDTH;
   canvas.height = HEIGHT;
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
 
   const fov = 90;
   let aspect = WIDTH / HEIGHT;
@@ -28,9 +29,9 @@ async function initialize() {
   camera.position.z = 2;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('rgb(235, 235, 235)');
+  scene.background = new THREE.Color('rgb(245, 245, 245)');
 
-  const geometry = new THREE.SphereGeometry(0.75, 100, 100);
+  const geometry = new THREE.SphereGeometry(0.75, 30, 30);
 
   const textureURI = await textureGenerator('USA');
 
@@ -44,24 +45,29 @@ async function initialize() {
 
   // light
   const light = new THREE.SpotLight('#fff', 0.5);
-  light.position.set(-2, 2, 2);
+  light.position.set(-2, 2, 5);
   scene.add(light);
 
   // ambient light
   const ambientLight = new THREE.AmbientLight('#fff', 0.8);
   scene.add(ambientLight);
 
-  renderer.render(scene, camera);
+  return {
+    sphere,
+    renderer,
+    camera,
+    scene
+  }
+}
 
-  // loop
+initialize().then(({ sphere, renderer, scene, camera }) => {
+  circularBarChartGenerator();
   function animate() {
     requestAnimationFrame(animate);
     // sphere.rotation.x += 0.01;
-    sphere.rotation.y += 0.02;
+    sphere.rotation.y += 0.002;
     renderer.render(scene, camera);
   }
 
   animate();
-}
-
-initialize();
+});
