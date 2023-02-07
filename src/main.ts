@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import circularBarChartGenerator from './circularBarChartGenerator';
+import state from './State';
 import textureGenerator from './textureGenerator';
 
 export {}
@@ -12,13 +13,14 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 `;
 
 async function initialize() {
+  await state.init();
   let WIDTH = window.innerWidth;
   let HEIGHT = window.innerHeight;
 
   const canvas = document.querySelector<HTMLCanvasElement>('#canvas')!;
   canvas.width = WIDTH;
   canvas.height = HEIGHT;
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 
   const fov = 90;
   let aspect = WIDTH / HEIGHT;
@@ -31,9 +33,9 @@ async function initialize() {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('rgb(245, 245, 245)');
 
-  const geometry = new THREE.SphereGeometry(0.75, 30, 30);
+  const geometry = new THREE.SphereGeometry(0.85, 30, 30);
 
-  const textureURI = await textureGenerator('USA');
+  const textureURI = await textureGenerator();
 
   const texture = new THREE.TextureLoader().load(textureURI);
   const material = new THREE.MeshPhongMaterial({ map: texture });
@@ -60,14 +62,17 @@ async function initialize() {
   }
 }
 
-initialize().then(({ sphere, renderer, scene, camera }) => {
-  circularBarChartGenerator();
-  function animate() {
-    requestAnimationFrame(animate);
-    // sphere.rotation.x += 0.01;
-    sphere.rotation.y += 0.002;
-    renderer.render(scene, camera);
-  }
 
-  animate();
-});
+function main() {
+    initialize().then(({ sphere, renderer, scene, camera }) => {
+    circularBarChartGenerator();
+    const animate = () => {
+      requestAnimationFrame(animate);
+      // sphere.rotation.x += 0.01;
+      sphere.rotation.y += 0.002;
+      renderer.render(scene, camera);
+    }
+    animate();
+  });
+}
+main();
