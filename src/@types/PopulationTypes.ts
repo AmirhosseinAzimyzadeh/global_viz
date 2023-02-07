@@ -1,7 +1,7 @@
-export interface CountryPopulation {
-  countryName: string,
-  countryCode: string,
-  population: number,
+export type CountryPopulation = {
+  'countryName': string,
+  'countryCode': string,
+  'population': string,
 }
 
 

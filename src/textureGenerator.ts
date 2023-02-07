@@ -1,19 +1,21 @@
 import * as d3 from 'd3';
-import { World } from './@types/WorldTypes';
+import state from './State';
 
 const TEXTURE_WIDTH = 640 * 4;
 const TEXTURE_HEIGHT = 320 * 4;
 
-export default async function textureGenerator(countyISO?: string): Promise<string> {
-  const canvas = document.createElement('canvas');
+let canvas: HTMLCanvasElement | null = null;
+
+export default async function textureGenerator(): Promise<string> {
+  if (!canvas) {
+    canvas = document.createElement('canvas');
+  }
   canvas.width = TEXTURE_WIDTH;
   canvas.height = TEXTURE_HEIGHT;
   const context = canvas.getContext('2d')!;
+  context.clearRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
-  const worldURL = '/data/countries.json';
-
-  const world = await d3.json<World>(worldURL);
-  if (!world) return '';
+  const world = state.getWorldMap()!;
 
   context.clearRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
   context.fillStyle = 'rgb(255, 255, 255)';
@@ -38,12 +40,16 @@ export default async function textureGenerator(countyISO?: string): Promise<stri
           context.lineTo(x, TEXTURE_HEIGHT - y);
         });
         context.closePath();
-        if (country.properties.ISO_A3 === countyISO) {
+        if (country.properties.ISO_A3 === state.getSelectedCountry()?.ISO_A3) {
           context.fillStyle = 'rgb(255, 155, 0)';
         } else {
-          context.fillStyle = 'rgb(150, 150, 150)';
+          // interpolate color
+          const population = country.properties.population;
+          const maxPopulation = state.getMaxPopulation();
+          context.fillStyle = d3.interpolateSpectral(population / maxPopulation);
+          // context.fillStyle = 'rgb(150, 150, 150)';
         }
-        context.strokeStyle = 'rgb(0,0,0,0.4)';
+        context.strokeStyle = 'white';
         context.stroke();
         context.fill();
       });

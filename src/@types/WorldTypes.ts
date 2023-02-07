@@ -1,10 +1,13 @@
 export interface WorldFeature {
   type: string,
   geometry: GeometryMultiPolygon | GeometryPolygon,
-  properties: {
-    ADMIN: string,
-    ISO_A3: string,
-  }
+  properties: CountryProperties,
+}
+
+export interface CountryProperties {
+  ADMIN: string,
+  ISO_A3: string,
+  population: number,
 }
 
 export interface GeometryMultiPolygon {
