@@ -1,12 +1,9 @@
 ﻿countryName,countryCode,population
 Aruba,ABW,106537
-Africa Eastern and Southern,AFE,702976832
 Afghanistan,AFG,40099462
-Africa Western and Central,AFW,478185907
 Angola,AGO,34503774
 Albania,ALB,2811666
 Andorra,AND,79034
-Arab World,ARB,456520777
 United Arab Emirates,ARE,9365145
 Argentina,ARG,45808747
 Armenia,ARM,2790974
@@ -60,20 +57,12 @@ Dominica,DMA,72412
 Denmark,DNK,5856733
 Dominican Republic,DOM,11117873
 Algeria,DZA,44177969
-East Asia & Pacific (excluding high income),EAP,2123673456
-Early-demographic dividend,EAR,3411889059
-East Asia & Pacific,EAS,2370204347
-Europe & Central Asia (excluding high income),ECA,401575218
-Europe & Central Asia,ECS,923777214
 Ecuador,ECU,17797737
 "Egypt, Arab Rep.",EGY,109262178
-Euro area,EMU,343067846
 Eritrea,ERI,3620312
 Spain,ESP,47415750
 Estonia,EST,1330932
 Ethiopia,ETH,120283026
-European Union,EUU,447199800
-Fragile and conflict affected situations,FCS,1001462452
 Finland,FIN,5541017
 Fiji,FJI,924610
 France,FRA,67749632
@@ -257,7 +246,6 @@ British Virgin Islands,VGB,31122
 Virgin Islands (U.S.),VIR,105870
 Vietnam,VNM,97468029
 Vanuatu,VUT,319137
-World,WLD,7888408686
 Samoa,WSM,218764
 Kosovo,XKX,1786038
 "Yemen, Rep.",YEM,32981641
