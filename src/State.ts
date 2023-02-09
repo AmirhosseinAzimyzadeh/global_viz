@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import { CountryPopulation } from './@types/PopulationTypes';
 import { CountryProperties, World } from './@types/WorldTypes';
+import textureGenerator from './textureGenerator';
 
 type ChangeListener = (newSelectedCountry: CountryProperties | null) => void;
 
@@ -10,15 +11,18 @@ class State {
   private worldMap: World | null;
   private selectedCountry: CountryProperties | null;
 
-  private changeListener: ChangeListener | null;
+  private changeListeners: ChangeListener[];
 
   private maxPopulation: number;
 
+  private selectedCountryCenter: [number, number] | null;
+
   constructor() {
     this.worldMap = null;
-    this.changeListener = null;
+    this.changeListeners = [];
     this.selectedCountry = null;
     this.maxPopulation = 0;
+    this.selectedCountryCenter = null;
   }
 
   public async init() {
@@ -39,7 +43,6 @@ class State {
             ...feature.properties,
             population: Number(populationData.find((country) => country.countryCode === feature.properties.ISO_A3)?.population),
         }}))
-      // .sort((a, b) => b.properties.population - a.properties.population),
     }
 
     // Find max population
@@ -47,12 +50,51 @@ class State {
   }
 
   public addChangeListener(l : ChangeListener) {
-    this.changeListener = l;
+    this.changeListeners.push(l);
   }
 
   public setSelectedCountry(country: CountryProperties | null) {
-    if (this.changeListener) {
-      this.changeListener(country);
+    this.changeListeners.forEach((l) => l(country));
+    const d = document.getElementById('selected_country')!;
+
+    if (country === null) {
+      this.selectedCountryCenter = null;
+      d.innerText = '--';
+    } else {
+      d.innerText = `${country.ADMIN} [2021] (${country.ISO_A3}) - Population: ${country.population}`;
+
+      // find max and min lat long
+      const c = this.worldMap?.features.find((f) => f.properties.ISO_A3 === country.ISO_A3)!;
+      let minLat = Infinity;
+      let maxLat = -Infinity;
+      let minLong = Infinity;
+      let maxLong = -Infinity;
+
+      const { geometry } = c;
+      let coordinates: [number, number][][][];
+      if (geometry.type === 'Polygon') {
+        coordinates = [geometry.coordinates];
+      } else {
+        coordinates = geometry.coordinates;
+      }
+
+      const longestPolygonIndex = coordinates.reduce((maxIndex, polygon, index) => {
+        if (polygon.length > coordinates[maxIndex].length) {
+          return index;
+        }
+        return maxIndex;
+      }, 0); 
+
+      const firstPolygon = coordinates[longestPolygonIndex];
+      firstPolygon.forEach((line) => {
+          line.forEach(([long, lat]) => {
+            minLat = Math.min(minLat, lat);
+            maxLat = Math.max(maxLat, lat);
+            minLong = Math.min(minLong, long);
+            maxLong = Math.max(maxLong, long);
+          });
+        });
+      this.selectedCountryCenter = [(minLong + maxLong) / 2, (minLat + maxLat) / 2];
     }
     this.selectedCountry = country;
   }
@@ -67,6 +109,10 @@ class State {
 
   public getMaxPopulation() {
     return this.maxPopulation;
+  }
+
+  public getSelectedCountryCenter() {
+    return this.selectedCountryCenter;
   }
 }
 
