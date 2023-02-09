@@ -10,17 +10,29 @@ export default function circularBarChartGenerator() {
   }));
 
   const margin = {
-    top: 20,
-    right: 20,
-    bottom: 20,
-    left: 20,
+    top: 10,
+    right: 10,
+    bottom: 10,
+    left: 10,
   };
 
   const width = window.innerHeight - margin.left - margin.right;
   const height = window.innerHeight - margin.top - margin.bottom;
 
-  const innerRadius = 0.25 * height;
-  const outerRadius = 0.4 * width;
+  const innerRadius = 0.3 * height;
+  const outerRadius = 0.48 * width;
+
+  const onMouseEnter = (e: MouseEvent, data: any) => {
+    state.setSelectedCountry({
+      ADMIN: data.name,
+      ISO_A3: data.code,
+      population: data.value,
+    }); 
+  }
+
+  const onMouseLeave = () => {
+    state.setSelectedCountry(null);
+  }
 
   const svg = d3.select('#chart')
     .append('svg')
@@ -45,29 +57,20 @@ export default function circularBarChartGenerator() {
   .data(data)
   .enter()
   .append('path')
+    .attr('class','chart_hover')
+    .attr('id', (d) => d.code)
     .attr('fill', 'rgba(0,0,0,0.02)')
     .attr('d', d3.arc<{ name: string, value: number }>() 
         .innerRadius((d) => y(d.value))
         .outerRadius(outerRadius)
         .startAngle((d) =>  Number(x(d.name)))
         .endAngle((d) => Number(x(d.name)) + x.bandwidth())
-        .padAngle(0.01)
+        .padAngle(0)
         .padRadius(innerRadius)
     )
-  .on('mouseover', (e: MouseEvent, data) => {
-    if (e.target === null) return;
-    d3.select(e.target as SVGPathElement).attr('fill', 'red');
-    state.setSelectedCountry({
-      ADMIN: data.name,
-      ISO_A3: data.code,
-      population: data.value,
-    });
-  })
-  .on('mouseout', (e: MouseEvent) => {
-    if (e.target === null) return;
-    state.setSelectedCountry(null);
-    d3.select(e.target as SVGPathElement).attr('fill', 'rgba(0,0,0,0.02)');
-  });
+    .attr('stroke', 'white') 
+  .on('mouseover', onMouseEnter)
+  .on('mouseout', onMouseLeave);
   
   
   svg.append('g')
@@ -75,6 +78,7 @@ export default function circularBarChartGenerator() {
   .data(data)
   .enter()
   .append('path')
+    .attr('class','chart_hover')
     .attr('fill', (d: any) => d3.interpolateSpectral(d['value'] / state.getMaxPopulation()))
     .attr('d', d3.arc<{ name: string, value: number }>() 
         .innerRadius(innerRadius)
@@ -84,6 +88,8 @@ export default function circularBarChartGenerator() {
         .padAngle(0.001)
         .padRadius(innerRadius)
     )
+    .on('mouseover', onMouseEnter)
+    .on('mouseout', onMouseLeave);
 
 
   svg.append('g')
@@ -98,6 +104,18 @@ export default function circularBarChartGenerator() {
     .attr('transform', (d) => (Number(x(d.name)) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? 'rotate(180)' : 'rotate(0)')
     .style('font-size', '11px')
     .attr('alignment-baseline', 'middle')
-    .style('font-size', '5px')
+    .style('font-size', '6px')
     .style('cursor', 'default')
+    .on('mouseover', (e: MouseEvent, data) => {
+      if (e.target === null) return;
+      state.setSelectedCountry({
+        ADMIN: data.name,
+        ISO_A3: data.code,
+        population: data.value,
+      });
+    })
+    .on('mouseout', (e: MouseEvent) => {
+      if (e.target === null) return;
+      state.setSelectedCountry(null);
+    });
 }
