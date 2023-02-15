@@ -13,6 +13,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   ></canvas>
 `;
 
+
 const debounce = new Debounce();
 
 async function initialize() {
