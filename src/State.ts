@@ -61,7 +61,7 @@ class State {
       this.selectedCountryCenter = null;
       d.innerText = '--';
     } else {
-      d.innerText = `${country.ADMIN} [2021] (${country.ISO_A3}) - Population: ${country.population}`;
+      d.innerText = `${country.ADMIN} [2021] (${country.ISO_A3}) - Population: ${country.population.toLocaleString('en-US')}`;
 
       // find max and min lat long
       const c = this.worldMap?.features.find((f) => f.properties.ISO_A3 === country.ISO_A3)!;

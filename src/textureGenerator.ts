@@ -24,7 +24,7 @@ export default async function textureGenerator(countryCode: string | null): Prom
   context.clearRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
   const world = state.getWorldMap()!;
   context.clearRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-  context.fillStyle = 'rgb(255, 255, 255)';
+  context.fillStyle = 'rgb(230, 230, 235)';
   context.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
   if (!WORLD_TEXTURE) {

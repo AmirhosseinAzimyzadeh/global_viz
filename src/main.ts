@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import * as d3 from 'd3';
 import circularBarChartGenerator from './circularBarChartGenerator';
 import Debounce from './Debounce';
 import state from './State';
@@ -44,11 +43,10 @@ async function initialize() {
   const initialTexture = new THREE.TextureLoader().load(textureURI);
   const material = new THREE.MeshPhongMaterial({
     map: initialTexture,
-    opacity: 0,
+    opacity: 1,
     color: 'rgb(245, 245, 245)'
   });
   material.needsUpdate = true;
-  material.precision = 'highp';
 
   const sphere = new THREE.Mesh(geometry, material);
   sphere.position.z = -1000;
@@ -104,6 +102,16 @@ function main() {
     let yRotateTarget = (-Math.PI / 2);
     let xRotateTarget = 0;
 
+    window.addEventListener('resize', () => {
+        circularBarChartGenerator();
+        const canvas = document.querySelector<HTMLCanvasElement>('#canvas')!;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+      }
+    );
     const animate: () => void = () => {
       requestAnimationFrame(animate);
 
@@ -115,8 +123,6 @@ function main() {
         xRotateTarget = (((lat) * Math.PI) / 90) / 2;
         sphere.rotation.x = xRotateTarget;
         sphere.rotation.y = yRotateTarget;
-
-        // cubic bezier animation to the rotate target
       } else {
         sphere.rotation.y += 0.001;
         xRotateTarget = 0;
@@ -128,4 +134,6 @@ function main() {
     animate();
   });
 }
+
 main();
+

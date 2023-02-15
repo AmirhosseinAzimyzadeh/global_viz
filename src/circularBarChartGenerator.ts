@@ -2,6 +2,12 @@ import * as d3 from 'd3';
 import state from './State';
 
 export default function circularBarChartGenerator() {
+  if (document.getElementById('chart')) {
+    document.body.removeChild(document.getElementById('chart')!);
+    const d = document.createElement('div');
+    d.id = 'chart';
+    document.body.appendChild(d);
+  }
   const worldMap = state.getWorldMap()!;
   const data = worldMap.features.map((f) => ({
     name: f.properties.ADMIN,
@@ -40,7 +46,7 @@ export default function circularBarChartGenerator() {
     .attr('width', width + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom)
     .append('g')
-    .attr('transform', `translate(${width / 2 + margin.left},${height / 2 + margin.top})`)
+    .attr('transform', `translate(${width / 2 + margin.left},${height / 2 + margin.top})`);
 
 
   const x = d3.scaleBand()
