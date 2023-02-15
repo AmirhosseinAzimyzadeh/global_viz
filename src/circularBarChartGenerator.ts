@@ -28,7 +28,7 @@ export default function circularBarChartGenerator() {
   const innerRadius = 0.3 * height;
   const outerRadius = 0.48 * width;
 
-  const onMouseEnter = (e: MouseEvent, data: any) => {
+  const onMouseEnter = (_: MouseEvent, data: any) => {
     state.setSelectedCountry({
       ADMIN: data.name,
       ISO_A3: data.code,
