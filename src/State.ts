@@ -25,6 +25,14 @@ class State {
   }
 
   public async init() {
+    const loadingElement = document.createElement('div');
+    loadingElement.innerText = 'Loading...';
+    loadingElement.style.position = 'absolute';
+    loadingElement.style.top = '50%';
+    loadingElement.style.left = '50%';
+    loadingElement.style.transform = 'translate(-50%, -50%)';
+    document.body.appendChild(loadingElement);
+
     const worldMap = await d3.json<World>(MAP_DATA_URL);
     const populationData = await d3.csv(POPULATION_DATA_URL) as CountryPopulation[];
     if (!worldMap) throw new Error('Failed to load world map data');
@@ -46,6 +54,8 @@ class State {
 
     // Find max population
     this.maxPopulation = this.worldMap.features.reduce((max, feature) => Math.max(max, feature.properties.population), 0);
+    
+    document.body.removeChild(loadingElement);
   }
 
   public addChangeListener(l : ChangeListener) {
