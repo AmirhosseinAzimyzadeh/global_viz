@@ -4,8 +4,8 @@ import { CountryProperties, World } from './@types/WorldTypes';
 
 type ChangeListener = (newSelectedCountry: CountryProperties | null) => void;
 
-const MAP_DATA_URL = '/data/countries.json';
-const POPULATION_DATA_URL = '/data/population.csv';
+const MAP_DATA_URL = 'https://raw.githubusercontent.com/AmirhosseinAzimyzadeh/global_viz/main/public/data/countries.json';
+const POPULATION_DATA_URL = 'https://raw.githubusercontent.com/AmirhosseinAzimyzadeh/global_viz/main/public/data/population.csv';
 class State {
   private worldMap: World | null;
   private selectedCountry: CountryProperties | null;
