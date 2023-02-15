@@ -1,7 +1,6 @@
 import * as d3 from 'd3';
 import { CountryPopulation } from './@types/PopulationTypes';
 import { CountryProperties, World } from './@types/WorldTypes';
-import textureGenerator from './textureGenerator';
 
 type ChangeListener = (newSelectedCountry: CountryProperties | null) => void;
 
